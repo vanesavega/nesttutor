@@ -26,38 +26,55 @@
       "origen": "diagnostico"
     }
   },
-  "posicion_actual": "f1.event-loop-async",
+  "posicion_actual": "f1.servidor-http-nativo",
   "pendiente": null,
   "fortalezas": [
     "Entiende que un bucle síncrono bloquea el hilo y que await no",
     "Usa Partial para DTOs de actualización",
     "Distingue controller/servicio/módulo y la falla de dependencias no resueltas",
     "Distingue PUT de PATCH",
-    "Base de Angular para decoradores e inyección"
+    "Base de Angular para decoradores e inyección",
+    "Resolvió el debug de errores ESM sin pistas",
+    "Construye comandos curl correctos (-i, -X, -H, -d)",
+    "Razona bien la idempotencia de DELETE una vez que piensa en el estado final"
   ],
   "debilidades": [
     "Orden de ejecución event loop (microtareas vs macrotareas)",
     "CommonJS vs ES Modules",
-    "Idempotencia y códigos de estado HTTP",
     "node:http: leer body, res.end",
     "ValidationPipe / activar la validación en Nest",
     "Cómo funciona la inyección de dependencias por dentro",
-    "Docker: imagen vs contenedor"
+    "Docker: imagen vs contenedor",
+    "Idempotencia: confundía 'no repetir la petición' con 'mismo estado final del servidor'",
+    "Diseño REST: PUT/PATCH/DELETE apuntan a /recurso/{id}; 404 = recurso concreto inexistente",
+    "Ceder el turno al event loop: await sobre un valor que no es promesa no cede",
+    "Cuerpo de una función async: corre síncrono hasta el primer await; microtareas en orden FIFO",
+    "Explicar el porqué de un error, no solo el arreglo (ESM sin extensión, __dirname)"
   ],
   "topicos": {
     "f1.event-loop-async": {
-      "status": "no_visto",
+      "status": "visto",
       "nivel": "bajo",
       "notas": [
-        "Orden A/setTimeout/promesa incorrecto; no reconoce el event loop. Sí entiende que un for síncrono bloquea y que await no."
-      ]
+        "Orden A/setTimeout/promesa incorrecto; no reconoce el event loop. Sí entiende que un for síncrono bloquea y que await no.",
+        "2026-11-23: predijo bien lo síncrono y que setTimeout va al final, pero necesitó 3 pistas para ver que el cuerpo de una async corre síncrono hasta su primer await y que las microtareas salen en orden FIFO.",
+        "2026-11-23 ejercicio 01-chunked-sum: usó chunks (cantidad de pedazos) en vez de chunkSize, hizo await sobre un valor normal (no cede el turno) y dejó el throw. Tras las 3 pistas se dio la solución completa y la explicó línea por línea: queda en visto. VARIANTE PENDIENTE para otra sesión (p. ej. con worker_threads o scheduler.yield)."
+      ],
+      "ultima_sesion": "2026-11-23",
+      "next_review": null,
+      "intentos": 1
     },
     "f1.modulos-cjs-esm": {
-      "status": "no_visto",
+      "status": "aprendido",
       "nivel": "nulo",
       "notas": [
-        "No distingue require/import; no sabe por qué falla import sin type module ni qué pasa con __dirname en ESM."
-      ]
+        "No distingue require/import; no sabe por qué falla import sin type module ni qué pasa con __dirname en ESM.",
+        "2026-11-23 ejercicio 01-fix-esm-errors (debug): arregló los 3 errores sin pistas con package.json intacto. Sus explicaciones del porqué fueron cortas (no dijo que ESM no adivina la extensión ni que __dirname lo inyecta CommonJS) y se saltó el paso de predecir. Confundió import.meta.filename con dirname en la pregunta 3 hasta que se le señaló.",
+        "Nota de versión: en Node 24 un .js con import y sin 'type' se detecta como ESM, y require() de ESM funciona (falla solo con top-level await: ERR_REQUIRE_ASYNC_MODULE)."
+      ],
+      "ultima_sesion": "2026-11-23",
+      "next_review": "2026-11-25",
+      "intentos": 1
     },
     "f1.typescript-backend": {
       "status": "visto",
@@ -70,11 +87,16 @@
       "intentos": 0
     },
     "f1.http-rest": {
-      "status": "no_visto",
+      "status": "visto",
       "nivel": "bajo",
       "notas": [
-        "Define mal idempotencia; no sabe códigos de estado para crear/400/404; distingue PUT de PATCH."
-      ]
+        "Define mal idempotencia; no sabe códigos de estado para crear/400/404; distingue PUT de PATCH.",
+        "2026-11-23: su definición de idempotencia era 'la petición no se repite'; tras un experimento mental (3 POST vs 3 DELETE) la reformuló bien como estado final del servidor.",
+        "2026-11-23 ejercicio 01-endpoints-table: entregó 5 de 8 filas (transcritas desde captura a tabla.md). Pendiente: PUT/PATCH sin /{id}, typo PACTH, columna Path con comandos curl, 404 entendido como 'ruta no encontrada' en lugar de 'recurso concreto no existe', texto en español. La estudiante decidió avanzar sin completarla; se retoma al verificar con curl contra el servidor de f1.servidor-http-nativo."
+      ],
+      "ultima_sesion": "2026-11-23",
+      "next_review": null,
+      "intentos": 1
     },
     "f1.servidor-http-nativo": {
       "status": "no_visto",
@@ -108,8 +130,8 @@
       ]
     }
   },
-  "sesiones_completadas": 1,
-  "ultima_sesion": "2026-11-22",
+  "sesiones_completadas": 2,
+  "ultima_sesion": "2026-11-23",
   "_reglas": [
     "Todo topico ausente de 'topicos' esta en status no_visto",
     "Estados validos: visto, aprendido, dominado",
