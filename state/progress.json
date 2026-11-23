@@ -6,20 +6,110 @@
     "completado_en": "2026-11-22"
   },
   "diagnostico": {
-    "estado": "pendiente",
-    "completado_en": null,
-    "nivel_global": null,
-    "niveles_por_fase": {},
-    "notas": []
+    "estado": "completado",
+    "completado_en": "2026-11-22",
+    "nivel_global": "nulo",
+    "niveles_por_fase": {
+      "f1": "bajo",
+      "f2": "bajo"
+    },
+    "notas": [
+      "Sondeo solo con preguntas (sin ejercicio verificado, tope medio). f1 completa; f2 parcial (anatomia-nest, dtos); f4 solo docker-basico. Fases 3 y 5+ no sondeadas.",
+      "La estudiante dijo haber estudiado Nest, BD y Docker pero 'sin interiorizar': el sondeo lo confirma (conocimiento superficial).",
+      "Pidió menos preguntas por mensaje: una por tema."
+    ]
   },
-  "gates_fase": {},
-  "posicion_actual": null,
+  "gates_fase": {
+    "f1": {
+      "estado": "completado",
+      "fecha": "2026-11-22",
+      "origen": "diagnostico"
+    }
+  },
+  "posicion_actual": "f1.event-loop-async",
   "pendiente": null,
-  "fortalezas": [],
-  "debilidades": [],
-  "topicos": {},
-  "sesiones_completadas": 0,
-  "ultima_sesion": null,
+  "fortalezas": [
+    "Entiende que un bucle síncrono bloquea el hilo y que await no",
+    "Usa Partial para DTOs de actualización",
+    "Distingue controller/servicio/módulo y la falla de dependencias no resueltas",
+    "Distingue PUT de PATCH",
+    "Base de Angular para decoradores e inyección"
+  ],
+  "debilidades": [
+    "Orden de ejecución event loop (microtareas vs macrotareas)",
+    "CommonJS vs ES Modules",
+    "Idempotencia y códigos de estado HTTP",
+    "node:http: leer body, res.end",
+    "ValidationPipe / activar la validación en Nest",
+    "Cómo funciona la inyección de dependencias por dentro",
+    "Docker: imagen vs contenedor"
+  ],
+  "topicos": {
+    "f1.event-loop-async": {
+      "status": "no_visto",
+      "nivel": "bajo",
+      "notas": [
+        "Orden A/setTimeout/promesa incorrecto; no reconoce el event loop. Sí entiende que un for síncrono bloquea y que await no."
+      ]
+    },
+    "f1.modulos-cjs-esm": {
+      "status": "no_visto",
+      "nivel": "nulo",
+      "notas": [
+        "No distingue require/import; no sabe por qué falla import sin type module ni qué pasa con __dirname en ESM."
+      ]
+    },
+    "f1.typescript-backend": {
+      "status": "visto",
+      "nivel": "medio",
+      "notas": [
+        "strict: solo mencionó noImplicitAny; Partial y DTO correcto; decoradores solo a nivel de Nest."
+      ],
+      "ultima_sesion": "2026-11-22",
+      "next_review": null,
+      "intentos": 0
+    },
+    "f1.http-rest": {
+      "status": "no_visto",
+      "nivel": "bajo",
+      "notas": [
+        "Define mal idempotencia; no sabe códigos de estado para crear/400/404; distingue PUT de PATCH."
+      ]
+    },
+    "f1.servidor-http-nativo": {
+      "status": "no_visto",
+      "nivel": "bajo",
+      "notas": [
+        "Reconoce req/res a medias; no sabe leer el body en node:http ni qué pasa sin res.end()."
+      ]
+    },
+    "f2.anatomia-nest": {
+      "status": "visto",
+      "nivel": "medio",
+      "notas": [
+        "Controller/servicio/módulo bien; sabe que falta provider da error de resolución; no explica cómo funciona la DI por dentro."
+      ],
+      "ultima_sesion": "2026-11-22",
+      "next_review": null,
+      "intentos": 0
+    },
+    "f2.dtos-validacion": {
+      "status": "no_visto",
+      "nivel": "bajo",
+      "notas": [
+        "No sabe que falta ValidationPipe para validar; esperaba que class-validator actuara solo."
+      ]
+    },
+    "f4.docker-basico": {
+      "status": "no_visto",
+      "nivel": "bajo",
+      "notas": [
+        "Confunde imagen y contenedor (dice que un contenedor tiene muchas imágenes)."
+      ]
+    }
+  },
+  "sesiones_completadas": 1,
+  "ultima_sesion": "2026-11-22",
   "_reglas": [
     "Todo topico ausente de 'topicos' esta en status no_visto",
     "Estados validos: visto, aprendido, dominado",
