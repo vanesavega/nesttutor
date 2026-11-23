@@ -1,0 +1,1054 @@
+# Roadmap de NestJS y Node.js backend - versión estructurada para el tutor.
+# La versión humana está en docs/roadmap.md.
+
+meta:
+  version: 1
+  horas_totales_estimadas: 190
+  reglas:
+  - 'Orden por defecto: secuencial (tópicos dentro de la fase, fases en orden).'
+  - prerequisitos solo se listan cuando cruzan fases o rompen el orden por defecto.
+  - 'tipo: codigo (ejercicio de producción obligatorio) | mixto (producción + diseño) | conceptual (ejercicio
+    de diseño escrito).'
+  - 'El estado del estudiante NO vive aquí: vive en state/progress.json.'
+fases:
+- id: f1
+  nombre: Node.js y TypeScript para backend
+  horas: 14
+  certificacion_ancla: null
+  criterio_dominio_fase: 'Implementa con node:http (sin Express) un servidor con router mínimo y CRUD
+    de un recurso en memoria: parseo de JSON, códigos HTTP correctos y manejo centralizado de errores.
+    Demuestra con un script que un bucle síncrono pesado bloquea otras peticiones y corrígelo.'
+  capstone: 'Servidor node:http con tableros en memoria (en Michilog: preparación previa al hito 3).'
+  topicos:
+  - id: f1.event-loop-async
+    nombre: Event loop y asincronía
+    tipo: codigo
+    conceptos:
+    - call stack
+    - event loop
+    - microtareas vs macrotareas
+    - promesas
+    - async/await
+    - bloqueo del hilo principal
+    tecnologias:
+    - Node 24 LTS
+    - setTimeout
+    - Promise.all
+    - worker_threads
+    criterio_dominio: Un script demuestra que un bucle síncrono pesado retrasa un setTimeout y lo corrige
+      partiendo el trabajo o con un worker thread; además predice y explica el orden de salida de 5 fragmentos
+      que mezclan promesas, setTimeout y process.nextTick.
+  - id: f1.modulos-cjs-esm
+    nombre: Módulos CommonJS y ES Modules
+    tipo: codigo
+    conceptos:
+    - require vs import
+    - package.json type
+    - tsconfig module
+    - import dinámico
+    - ERR_REQUIRE_ESM
+    tecnologias:
+    - tsc
+    - package.json
+    - tsconfig.json
+    criterio_dominio: El mismo módulo de utilidades se consume desde un proyecto CJS y otro ESM, ambos
+      compilan con tsc y se ejecutan; el estudiante provoca y explica 3 errores típicos (require is not
+      defined, ERR_MODULE_NOT_FOUND, __dirname is not defined).
+  - id: f1.typescript-backend
+    nombre: TypeScript para backend
+    tipo: codigo
+    conceptos:
+    - strict
+    - interfaces vs clases
+    - genéricos
+    - utility types (Partial, Pick, Omit)
+    - decoradores
+    - emitDecoratorMetadata
+    - reflect-metadata
+    tecnologias:
+    - tsc
+    - tsconfig.json
+    - reflect-metadata
+    criterio_dominio: Un decorador de clase y uno de método propios registran metadatos con reflect-metadata
+      y otro código los lee, con tsconfig en strict sin errores; además tipa una función genérica usando
+      Partial y Pick.
+  - id: f1.http-rest
+    nombre: HTTP y REST
+    tipo: mixto
+    conceptos:
+    - métodos HTTP
+    - códigos de estado
+    - headers
+    - idempotencia
+    - JSON
+    - recursos y rutas
+    tecnologias:
+    - curl
+    - Bruno
+    criterio_dominio: Una tabla de 8 endpoints de un recurso con método, ruta, código de éxito y códigos
+      de error, justificando cuáles son idempotentes, y verificada con curl contra el servidor del tópico
+      siguiente.
+  - id: f1.servidor-http-nativo
+    nombre: Servidor HTTP sin framework
+    tipo: codigo
+    conceptos:
+    - node:http
+    - router mínimo
+    - parseo del body JSON
+    - manejo centralizado de errores
+    - streams de request
+    tecnologias:
+    - node:http
+    - curl
+    - fetch
+    criterio_dominio: 'CRUD de un recurso en memoria con router propio sobre node:http: 201, 204, 404,
+      400 y 500 correctos, errores en un único punto, y un test con fetch que ejercita cada ruta.'
+- id: f2
+  nombre: 'Núcleo de Nest: controladores, servicios, módulos, DTOs y pipes'
+  horas: 26
+  certificacion_ancla: null
+  criterio_dominio_fase: API CRUD con al menos 2 módulos, DTOs validados (rechaza campos extra y convierte
+    tipos), un pipe personalizado, un interceptor que envuelve la respuesta, un filtro que traduce un
+    error de dominio a HTTP y Swagger funcionando. Dibuja y explica el orden middleware, guard, interceptor,
+    pipe, handler.
+  capstone: 'API Nest de boards, listas y tarjetas con DTOs, pipes y Swagger (en Michilog: hitos 3a, 4
+    y 5).'
+  topicos:
+  - id: f2.anatomia-nest
+    nombre: Anatomía de Nest
+    tipo: codigo
+    conceptos:
+    - '@Module'
+    - '@Controller'
+    - '@Injectable'
+    - NestFactory.create
+    - CLI nest g resource
+    - inyección por constructor
+    tecnologias:
+    - '@nestjs/cli'
+    - nest new
+    - nest g resource
+    criterio_dominio: App nueva con 2 módulos, cada uno con controller y service, que arranca y responde
+      GET y POST; el estudiante explica qué hace cada archivo generado y qué pasa si quita un provider
+      del módulo.
+  - id: f2.rutas-parametros
+    nombre: Rutas, parámetros y códigos HTTP
+    tipo: codigo
+    conceptos:
+    - '@Get/@Post/@Put/@Patch/@Delete'
+    - '@Param'
+    - '@Query'
+    - '@Body'
+    - '@Headers'
+    - '@HttpCode'
+    - retorno vs @Res
+    tecnologias:
+    - curl
+    - Bruno
+    criterio_dominio: Controller CRUD completo de un recurso con 201, 204 y 404 correctos, probado con
+      curl, usando @Param, @Query y @Body, sin tocar el objeto de respuesta de Express.
+  - id: f2.dtos-validacion
+    nombre: DTOs y validación con class-validator
+    tipo: codigo
+    conceptos:
+    - DTO vs entity
+    - class-validator
+    - class-transformer
+    - ValidationPipe whitelist y transform
+    - PartialType
+    - PickType
+    - OmitType
+    tecnologias:
+    - class-validator
+    - class-transformer
+    - '@nestjs/mapped-types'
+    criterio_dominio: DTOs de creación y actualización (este con PartialType); una petición con campo
+      extra se rechaza con 400 y una con tipo equivocado se rechaza o convierte según la configuración,
+      con un test e2e que lo demuestra.
+  - id: f2.pipes
+    nombre: Pipes integrados y personalizados
+    tipo: codigo
+    conceptos:
+    - transformar vs validar
+    - ParseIntPipe
+    - ParseUUIDPipe
+    - pipe personalizado
+    - pipes por parámetro, ruta y globales
+    tecnologias:
+    - PipeTransform
+    - ParseUUIDPipe
+    criterio_dominio: Un pipe personalizado normaliza un parámetro (por ejemplo, trim y minúsculas de
+      un slug) y tiene un test unitario; ParseUUIDPipe devuelve 400 con un id inválido.
+  - id: f2.standard-schema
+    nombre: Validación con Standard Schema y Zod
+    tipo: mixto
+    conceptos:
+    - Standard Schema
+    - Zod
+    - opción schema en @Body
+    - class-validator vs schema
+    - cuándo elegir cada uno
+    tecnologias:
+    - Zod
+    - NestJS 12
+    criterio_dominio: El mismo endpoint se implementa con DTO de class-validator y con un schema de Zod
+      vía la opción schema de @Body, ambos con test, y una comparación escrita de 5 líneas sobre cuándo
+      usar cada uno.
+  - id: f2.ciclo-request
+    nombre: Ciclo de la request
+    tipo: codigo
+    conceptos:
+    - orden de ejecución
+    - middleware
+    - guard (canActivate)
+    - interceptor (intercept y map)
+    - exception filter (catch)
+    - bindings globales vs por ruta
+    tecnologias:
+    - NestMiddleware
+    - CanActivate
+    - NestInterceptor
+    - ExceptionFilter
+    criterio_dominio: App con un middleware, un guard de API key, un interceptor que envuelve la respuesta
+      en un objeto con data y un filtro que traduce un error de dominio a un 4xx; el orden de ejecución
+      se comprueba con logs y se dibuja.
+  - id: f2.serializacion-swagger
+    nombre: Serialización y Swagger
+    tipo: codigo
+    conceptos:
+    - ClassSerializerInterceptor
+    - '@Exclude y @Expose'
+    - '@nestjs/swagger'
+    - '@ApiProperty'
+    - plugin de Swagger del CLI
+    - versionado de API
+    tecnologias:
+    - class-transformer
+    - '@nestjs/swagger'
+    criterio_dominio: Una respuesta no expone un campo sensible (por ejemplo password) gracias a la serialización,
+      Swagger muestra los DTOs con ejemplos y existe una ruta versionada /v1.
+  - id: f2.paginacion-archivos
+    nombre: Paginación, filtros y subida de archivos
+    tipo: codigo
+    conceptos:
+    - paginación offset vs cursor
+    - DTO de query
+    - Multer
+    - FileInterceptor
+    - ParseFilePipe
+    - validación de tipo y tamaño
+    - archivos estáticos
+    tecnologias:
+    - '@nestjs/platform-express'
+    - Multer
+    - ServeStaticModule
+    criterio_dominio: Un GET paginado con filtros validados y un POST que acepta solo imágenes de menos
+      de 2 MB, rechaza el resto con el código de error correcto y sirve el archivo guardado.
+- id: f3
+  nombre: Providers personalizados, módulos globales y dinámicos
+  horas: 12
+  certificacion_ancla: null
+  criterio_dominio_fase: Un MailModule con una interfaz MailSender y dos implementaciones (consola y falsa)
+    elegidas con useFactory según el entorno; un módulo global con useValue; un módulo dinámico propio
+    con forRootAsync; un test que reemplaza el provider. Explica cuándo un @Global() perjudica.
+  capstone: 'NotificationSender intercambiable por entorno y un módulo global de utilidades (en Michilog:
+    hitos 3a y 3b).'
+  topicos:
+  - id: f3.tokens-custom-providers
+    nombre: Tokens y providers personalizados
+    tipo: codigo
+    conceptos:
+    - '@Inject'
+    - token string, Symbol y clase abstracta
+    - useClass
+    - useValue
+    - useFactory
+    - useExisting
+    tecnologias:
+    - '@nestjs/common'
+    - '@Inject'
+    criterio_dominio: Una clase abstracta MailSender con ConsoleMailSender y FakeMailSender; el módulo
+      registra cada forma (useClass, useValue, useFactory, useExisting) y un test muestra qué recibe un
+      consumidor en cada caso.
+  - id: f3.factory-entorno
+    nombre: useFactory con dependencias y entorno
+    tipo: codigo
+    conceptos:
+    - useFactory con inject
+    - factory asíncrona
+    - selección por entorno
+    - providers condicionales
+    - overrideProvider
+    tecnologias:
+    - useFactory
+    - Test.createTestingModule
+    criterio_dominio: Un provider se elige en tiempo de ejecución según una variable de entorno y un test
+      lo reemplaza con overrideProvider sin tocar el código de producción.
+  - id: f3.modulos-compartidos-globales
+    nombre: Módulos compartidos y globales
+    tipo: codigo
+    conceptos:
+    - imports y exports
+    - '@Global'
+    - encapsulación de providers
+    - re-exportar módulos
+    - riesgos de lo global
+    tecnologias:
+    - '@Module'
+    - '@Global'
+    criterio_dominio: Un módulo global de utilidades se usa sin importarlo en cada feature; el estudiante
+      provoca el error de inyección por falta de export, lo arregla y explica por escrito por qué un módulo
+      con lógica de negocio no debería ser @Global.
+  - id: f3.modulos-dinamicos
+    nombre: Módulos dinámicos
+    tipo: codigo
+    conceptos:
+    - DynamicModule
+    - forRoot
+    - forRootAsync
+    - register
+    - ConfigurableModuleBuilder
+    tecnologias:
+    - ConfigurableModuleBuilder
+    - DynamicModule
+    criterio_dominio: Un módulo propio con forRoot y forRootAsync recibe opciones (una desde un valor
+      y otra desde una factory con ConfigService) y se usa en dos apps de prueba.
+  - id: f3.scopes-ciclo-vida
+    nombre: Scopes, ciclo de vida y dependencias circulares
+    tipo: codigo
+    conceptos:
+    - DEFAULT, REQUEST y TRANSIENT
+    - onModuleInit
+    - onApplicationShutdown
+    - ModuleRef
+    - forwardRef
+    - dependencia circular
+    tecnologias:
+    - Scope
+    - ModuleRef
+    - forwardRef
+    criterio_dominio: Demuestra con logs cuántas instancias se crean en cada scope, provoca una dependencia
+      circular y la resuelve de dos formas (forwardRef y refactor que la elimina), y explica el costo
+      del scope REQUEST.
+- id: f4
+  nombre: Configuración tipada, Docker y PostgreSQL con pg
+  horas: 20
+  certificacion_ancla: null
+  criterio_dominio_fase: docker compose up levanta Postgres; la app se niega a arrancar con un mensaje
+    claro si falta DB_PASSWORD; un DatabaseModule global expone un Pool vía useFactory; un UsersRepository
+    con pg hace CRUD con consultas parametrizadas y una transacción con rollback ante error. Demuestra
+    que una consulta concatenada es vulnerable y la parametrizada no.
+  capstone: 'Configuración tipada con Joi, Docker Compose y tabla de usuarios con pg (en Michilog: hito
+    3a).'
+  topicos:
+  - id: f4.docker-basico
+    nombre: Docker - imágenes, contenedores y volúmenes
+    tipo: codigo
+    conceptos:
+    - imagen vs contenedor
+    - Dockerfile básico
+    - volúmenes
+    - redes
+    - mapeo de puertos
+    tecnologias:
+    - docker run
+    - docker ps
+    - docker logs
+    - docker exec
+    - psql
+    criterio_dominio: Levanta Postgres con docker run y un volumen, conéctate con psql, detén y recrea
+      el contenedor y comprueba que los datos persisten.
+  - id: f4.compose-postgres
+    nombre: Docker Compose con PostgreSQL
+    tipo: codigo
+    conceptos:
+    - docker-compose.yml
+    - healthcheck
+    - depends_on con condition
+    - variables desde .env
+    - redes de compose
+    tecnologias:
+    - docker compose up
+    - docker compose ps
+    - healthcheck
+    criterio_dominio: Un compose.yml con Postgres (healthcheck, volumen, variables desde .env) que levanta
+      con docker compose up -d y reporta el servicio como healthy.
+  - id: f4.sql-esencial
+    nombre: SQL esencial
+    tipo: codigo
+    conceptos:
+    - DDL y DML
+    - claves primarias y foráneas
+    - JOIN
+    - GROUP BY
+    - índices
+    - EXPLAIN
+    - transacciones
+    tecnologias:
+    - psql
+    - EXPLAIN ANALYZE
+    criterio_dominio: Esquema de 3 tablas con claves foráneas, 5 consultas (con JOIN y agregación) y un
+      EXPLAIN antes y después de crear un índice que muestra el cambio de plan.
+  - id: f4.config-env
+    nombre: Variables de entorno y ConfigModule
+    tipo: codigo
+    conceptos:
+    - configuración 12-factor
+    - .env y .env.example
+    - ConfigModule.forRoot isGlobal
+    - envFilePath
+    - expandVariables
+    - ConfigService.get
+    tecnologias:
+    - '@nestjs/config'
+    - dotenv
+    criterio_dominio: La app lee PORT y DB_* desde .env mediante ConfigService; .env está ignorado por
+      git y .env.example está versionado; el estudiante cambia de entorno con NODE_ENV.
+  - id: f4.validacion-env-joi
+    nombre: Validación de entorno con Joi y configuración tipada
+    tipo: codigo
+    conceptos:
+    - validationSchema con Joi 18
+    - defaults
+    - fallar al arrancar
+    - registerAs
+    - ConfigType
+    - alternativa con Standard Schema y Zod
+    tecnologias:
+    - Joi
+    - registerAs
+    - ConfigType
+    criterio_dominio: La app se niega a arrancar con un mensaje claro si falta DB_PASSWORD; una configuración
+      registerAs('database') se inyecta tipada con ConfigType sin any; la misma validación se reescribe
+      con Zod en un archivo aparte.
+  - id: f4.pg-pool
+    nombre: node-postgres - Pool, consultas parametrizadas y transacciones
+    tipo: codigo
+    conceptos:
+    - Pool y Client
+    - pool.query
+    - parámetros $1
+    - inyección SQL
+    - BEGIN, COMMIT y ROLLBACK
+    - client.release
+    tecnologias:
+    - pg
+    - Pool
+    - client.release
+    criterio_dominio: Una función con consulta concatenada cuya vulnerabilidad a inyección SQL se demuestra
+      y su versión parametrizada segura; una transferencia entre dos filas hace rollback ante un error,
+      con test.
+  - id: f4.database-module-global
+    nombre: DatabaseModule global con useFactory
+    tipo: codigo
+    conceptos:
+    - '@Global'
+    - useFactory con ConfigService
+    - token del Pool
+    - onApplicationShutdown y pool.end
+    - repositorio escrito a mano
+    tecnologias:
+    - '@nestjs/config'
+    - pg
+    - useFactory
+    criterio_dominio: Un DatabaseModule global expone el Pool vía useFactory con configuración tipada;
+      un UsersRepository hace CRUD con pg; al cerrar la app el pool se cierra (se ve en logs) y compose
+      es el único requisito para correrla.
+- id: f5
+  nombre: TypeORM, patrón repository, migraciones y relaciones
+  horas: 30
+  certificacion_ancla: null
+  criterio_dominio_fase: Modelo de 5 entidades con los tres tipos de relación; migración inicial generada
+    y revisada; una migración manual de datos; un N+1 reproducido y corregido; una transacción que revierte;
+    un repositorio de dominio que oculta TypeORM tras una interfaz, probado con un repositorio falso.
+    Explica por qué synchronize true no va en producción.
+  capstone: 'Migración del modelo relacional a TypeORM, con relaciones y migraciones (en Michilog: hito
+    3b).'
+  topicos:
+  - id: f5.typeorm-conexion
+    nombre: TypeORM - conexión y entities
+    tipo: codigo
+    prerequisitos:
+    - f4.validacion-env-joi
+    conceptos:
+    - TypeOrmModule.forRootAsync
+    - ConfigService
+    - '@Entity'
+    - '@Column'
+    - '@PrimaryGeneratedColumn'
+    - enums
+    - timestamps
+    - DataSource
+    tecnologias:
+    - '@nestjs/typeorm'
+    - TypeORM 1.x
+    criterio_dominio: La app conecta a Postgres con forRootAsync desde configuración tipada; una entidad
+      User con columnas, enum y timestamps se crea y consulta; el estudiante explica la diferencia entre
+      synchronize y migraciones.
+  - id: f5.repository-crud
+    nombre: Repository y QueryBuilder
+    tipo: codigo
+    conceptos:
+    - forFeature
+    - '@InjectRepository'
+    - find, findOne, save y remove
+    - FindOptionsWhere
+    - QueryBuilder
+    - soft delete
+    tecnologias:
+    - Repository
+    - QueryBuilder
+    criterio_dominio: CRUD de User con el repositorio de TypeORM más 2 consultas con QueryBuilder (filtro,
+      orden y paginación) con test e2e.
+  - id: f5.patron-repository
+    nombre: Patrón repository de dominio
+    tipo: codigo
+    conceptos:
+    - clase abstracta de repositorio
+    - token de inyección
+    - adaptador de TypeORM
+    - repositorio en memoria para tests
+    - cuándo vale la capa extra
+    tecnologias:
+    - useClass
+    - Test.createTestingModule
+    criterio_dominio: Un servicio depende de una clase abstracta UsersRepository con una implementación
+      TypeORM y otra InMemory; el servicio se prueba con la InMemory; el estudiante explica un caso donde
+      la capa extra no valdría la pena.
+  - id: f5.relaciones-uno-muchos
+    nombre: Relaciones uno a uno y uno a muchos
+    tipo: codigo
+    conceptos:
+    - OneToOne
+    - OneToMany y ManyToOne
+    - JoinColumn
+    - cascade
+    - onDelete
+    - carga explícita vs eager
+    - lado propietario
+    tecnologias:
+    - '@OneToMany'
+    - '@ManyToOne'
+    - '@OneToOne'
+    criterio_dominio: Modelo User con muchos Posts (1 a N) y un Profile (1 a 1) con cascade y onDelete
+      CASCADE verificado; una consulta carga relaciones con relations y hay un test e2e.
+  - id: f5.muchos-a-muchos
+    nombre: Relaciones muchos a muchos
+    tipo: codigo
+    conceptos:
+    - ManyToMany
+    - JoinTable
+    - tabla pivote explícita
+    - columnas extra en la pivote
+    tecnologias:
+    - '@ManyToMany'
+    - '@JoinTable'
+    criterio_dominio: Post y Tag con ManyToMany, y una variante con entidad pivote explícita con una columna
+      extra (por ejemplo assignedAt); una consulta devuelve los tags de un post.
+  - id: f5.migraciones
+    nombre: Migraciones
+    tipo: codigo
+    conceptos:
+    - DataSource para la CLI
+    - migration:generate
+    - migration:run
+    - migration:revert
+    - migraciones manuales
+    - migraciones de datos
+    - synchronize false
+    tecnologias:
+    - typeorm CLI
+    - psql
+    criterio_dominio: 'Tres migraciones: la inicial generada, una de cambio de columna escrita a mano
+      con up y down, y una de datos; revert deja el esquema como estaba, verificado con psql.'
+  - id: f5.n-mas-1-transacciones
+    nombre: Problema N+1 y transacciones
+    tipo: codigo
+    conceptos:
+    - N+1
+    - logging de queries
+    - joins vs relations
+    - DataSource.transaction
+    - QueryRunner
+    tecnologias:
+    - QueryRunner
+    - logging de TypeORM
+    criterio_dominio: Reproduce un N+1 contando queries en logs y lo corrige bajando a una consulta; una
+      transacción multi-tabla revierte si falla el segundo insert, con test.
+  - id: f5.tipado-alternativas
+    nombre: Tipado, seeding y alternativas a TypeORM
+    tipo: mixto
+    conceptos:
+    - DeepPartial
+    - FindOptionsWhere
+    - tipo de retorno de QueryBuilder
+    - seeding idempotente
+    - Drizzle
+    - Prisma
+    tecnologias:
+    - TypeORM
+    - Drizzle
+    - Prisma
+    criterio_dominio: Un script de seed idempotente, una consulta tipada sin any ni casts y un documento
+      de 15 líneas que compara TypeORM, Drizzle y Prisma para un caso concreto, con un fragmento de código
+      de una de las alternativas.
+- id: f6
+  nombre: MongoDB y Mongoose
+  horas: 20
+  certificacion_ancla: null
+  criterio_dominio_fase: Un módulo de actividad con schema tipado, relaciones por ref y populate, un subdocumento
+    embebido, un índice TTL y una agregación que agrupa actividad por usuario; más un texto de 10 líneas
+    que justifica qué datos van en Postgres y cuáles en Mongo.
+  capstone: 'Feed de actividad y comentarios en MongoDB (en Michilog: fase IoT, lecturas de sensores).'
+  topicos:
+  - id: f6.modelo-documental
+    nombre: Modelo documental y MongoDB en Docker
+    tipo: mixto
+    conceptos:
+    - documento y colección
+    - embeber vs referenciar
+    - ObjectId
+    - replica set
+    - compose con Mongo
+    tecnologias:
+    - MongoDB
+    - docker compose
+    - mongosh
+    criterio_dominio: Un compose con Mongo y replica set iniciado (rs.status correcto); el mismo dominio
+      de 3 entidades modelado en SQL y en documentos con justificación de qué se embebe y qué se referencia.
+  - id: f6.mongoose-nest
+    nombre: Mongoose en Nest - conexión y schemas
+    tipo: codigo
+    conceptos:
+    - MongooseModule.forRootAsync
+    - forFeature
+    - '@Schema'
+    - '@Prop'
+    - SchemaFactory
+    - defaults y validación
+    - índices únicos
+    tecnologias:
+    - '@nestjs/mongoose'
+    - Mongoose 9
+    criterio_dominio: Un módulo con schema decorado con validación, default e índice único; la violación
+      del índice único devuelve 409 mediante un filtro de excepciones.
+  - id: f6.tipado-mongoose
+    nombre: Tipado con Mongoose
+    tipo: codigo
+    conceptos:
+    - HydratedDocument
+    - InferSchemaType
+    - lean()
+    - Types.ObjectId
+    - filtros tipados de Mongoose 9
+    tecnologias:
+    - Mongoose
+    - TypeScript strict
+    criterio_dominio: 'Un servicio con tipos explícitos y sin any: find con lean tipado y create sin casts;
+      el estudiante muestra el error de compilación que produce un filtro mal tipado.'
+  - id: f6.relaciones-mongo
+    nombre: Relaciones en Mongo - ref, populate y subdocumentos
+    tipo: codigo
+    conceptos:
+    - ref
+    - populate
+    - virtual populate
+    - subdocumentos
+    - discriminators
+    tecnologias:
+    - populate
+    - Schema.virtual
+    criterio_dominio: Usuarios y comentarios por ref con populate, un subdocumento embebido y una consulta
+      con virtual populate; se mide cuántas queries ejecuta cada variante.
+  - id: f6.indices-agregacion
+    nombre: Índices, TTL y aggregation pipeline
+    tipo: codigo
+    conceptos:
+    - índices compuestos
+    - índice TTL
+    - índice de texto
+    - $match, $group, $lookup y $project
+    - explain
+    tecnologias:
+    - Model.aggregate
+    - explain()
+    criterio_dominio: Una colección de eventos con índice TTL que expira documentos (comprobado) y una
+      agregación que agrupa por usuario con $lookup; explain muestra el uso de un índice.
+  - id: f6.transacciones-poliglota
+    nombre: Transacciones y persistencia políglota
+    tipo: mixto
+    conceptos:
+    - sesiones y transacciones
+    - replica set requerido
+    - Postgres y Mongo en un mismo sistema
+    - consistencia eventual
+    tecnologias:
+    - session.withTransaction
+    - Mongoose
+    - TypeORM
+    criterio_dominio: Una operación en Mongo con transacción que revierte ante un error y un documento
+      de 10 líneas que decide qué datos van en Postgres y cuáles en Mongo para un dominio dado, con una
+      integración funcionando entre ambos.
+- id: f7
+  nombre: Autenticación y autorización
+  horas: 18
+  certificacion_ancla: null
+  criterio_dominio_fase: Registro, login, refresh con rotación y logout; guard global con @Public(); roles
+    admin y user; un usuario no puede editar un recurso ajeno (403), con test e2e. Explica qué pasa si
+    roban un refresh token y cómo lo mitiga el diseño.
+  capstone: 'Registro, login JWT con refresh y roles de miembro por tablero (en Michilog: hito 6).'
+  topicos:
+  - id: f7.hash-passwords
+    nombre: Hashing de contraseñas y registro
+    tipo: codigo
+    prerequisitos:
+    - f5.repository-crud
+    conceptos:
+    - hash vs cifrado
+    - salt
+    - costo del algoritmo
+    - argon2 y bcrypt
+    - no registrar contraseñas en logs
+    tecnologias:
+    - argon2
+    - bcrypt
+    criterio_dominio: El endpoint /register guarda un hash argon2 y nunca el texto; un test comprueba
+      que la contraseña no aparece en la respuesta ni en logs y que la verificación acepta la correcta
+      y rechaza la incorrecta.
+  - id: f7.jwt-acceso
+    nombre: JWT - login y token de acceso
+    tipo: codigo
+    conceptos:
+    - header, payload y firma
+    - claims y exp
+    - JwtService sign y verify
+    - secretos en configuración
+    tecnologias:
+    - '@nestjs/jwt'
+    - jwt.io
+    criterio_dominio: El login emite un JWT de 15 minutos; un token manipulado devuelve 401; el estudiante
+      decodifica un token a mano e interpreta sus claims.
+  - id: f7.passport-guards
+    nombre: Passport, guards y decoradores propios
+    tipo: codigo
+    conceptos:
+    - estrategias local y jwt
+    - AuthGuard
+    - guard global y @Public()
+    - '@CurrentUser'
+    - Reflector y metadata
+    tecnologias:
+    - '@nestjs/passport'
+    - passport-jwt
+    - Reflector
+    criterio_dominio: Un guard global protege todo excepto las rutas marcadas con @Public(); @CurrentUser
+      inyecta el usuario en el handler; un test e2e confirma 401 sin token.
+  - id: f7.refresh-tokens
+    nombre: Refresh tokens con rotación
+    tipo: codigo
+    conceptos:
+    - access vs refresh
+    - hash del refresh en la base de datos
+    - rotación
+    - revocación
+    - detección de reuso
+    - cookie httpOnly vs Bearer
+    tecnologias:
+    - '@nestjs/jwt'
+    - argon2
+    criterio_dominio: Refresh con rotación (el anterior deja de servir); reusar un refresh viejo invalida
+      la sesión; el refresh se guarda hasheado y el logout lo revoca; el estudiante explica qué pasa si
+      roban un refresh y cómo lo mitiga el diseño.
+  - id: f7.autorizacion-roles
+    nombre: Autorización - roles y propiedad de recursos
+    tipo: codigo
+    conceptos:
+    - RBAC
+    - RolesGuard y @Roles
+    - comprobación de propiedad
+    - 403 vs 404
+    tecnologias:
+    - Reflector
+    - SetMetadata
+    criterio_dominio: Roles admin y user con @Roles; un usuario no puede editar un recurso ajeno (403)
+      y el admin sí, con tests e2e para los tres casos.
+  - id: f7.seguridad-api
+    nombre: Seguridad de la API - CORS, helmet y rate limiting
+    tipo: mixto
+    conceptos:
+    - CORS
+    - headers de helmet
+    - rate limiting
+    - OWASP API Top 10
+    - CSRF básico
+    - OAuth2 y OIDC (visión general)
+    tecnologias:
+    - helmet
+    - '@nestjs/throttler'
+    - curl -I
+    criterio_dominio: El login devuelve 429 tras N intentos (test); CORS queda limitado a un origen; los
+      headers de helmet se verifican con curl -I; el estudiante explica 3 riesgos de OWASP API Top 10
+      aplicados a su proyecto.
+- id: f8
+  nombre: Tiempo real, colas y microservicios
+  horas: 28
+  certificacion_ancla: null
+  criterio_dominio_fase: Dos clientes en una misma sala ven en vivo los cambios del otro (con autenticación
+    en el handshake); un job de BullMQ envía una notificación con reintentos; un microservicio de notificaciones
+    separado, comunicado por un transporter con message y event pattern, corriendo en Compose. Demuestra
+    qué pasa cuando el microservicio está caído y cómo lo maneja el diseño.
+  capstone: 'Tablero en vivo con Socket.IO, notificaciones por BullMQ y un microservicio (en Michilog:
+    hitos 7, 8 y 9; microservicios en la fase IoT).'
+  topicos:
+  - id: f8.websockets-gateways
+    nombre: WebSockets y gateways con Socket.IO
+    tipo: codigo
+    conceptos:
+    - WebSocket vs polling vs SSE
+    - '@WebSocketGateway'
+    - '@SubscribeMessage'
+    - rooms
+    - namespaces
+    - acknowledgements
+    tecnologias:
+    - '@nestjs/websockets'
+    - socket.io
+    - socket.io-client
+    criterio_dominio: 'Un gateway con salas: dos clientes en la misma sala reciben el mensaje del otro
+      y uno en otra sala no, demostrado con un script cliente de prueba.'
+  - id: f8.ws-auth-pipeline
+    nombre: Autenticación y pipeline en WebSockets
+    tipo: codigo
+    prerequisitos:
+    - f7.passport-guards
+    conceptos:
+    - autenticación en el handshake
+    - guards, pipes y filters en gateways
+    - WsException
+    - adaptador de Redis
+    tecnologias:
+    - '@socket.io/redis-adapter'
+    - Redis
+    - WsException
+    criterio_dominio: Una conexión sin token se rechaza en el handshake; un mensaje inválido produce una
+      WsException visible para el cliente; dos instancias de la app quedan sincronizadas con el adaptador
+      de Redis.
+  - id: f8.sse-cache
+    nombre: SSE y caché con Redis
+    tipo: codigo
+    conceptos:
+    - '@Sse'
+    - Observable de eventos
+    - cache-manager
+    - TTL
+    - invalidación de caché
+    tecnologias:
+    - '@nestjs/cache-manager'
+    - Redis
+    - '@Sse'
+    criterio_dominio: Un endpoint SSE emite eventos a un cliente; un endpoint cacheado con TTL se invalida
+      al escribir, mostrando hit y miss en logs.
+  - id: f8.eventos-schedule
+    nombre: Eventos internos y tareas programadas
+    tipo: codigo
+    conceptos:
+    - '@nestjs/event-emitter'
+    - '@OnEvent'
+    - '@Cron'
+    - '@Interval'
+    - tareas idempotentes
+    tecnologias:
+    - '@nestjs/event-emitter'
+    - '@nestjs/schedule'
+    criterio_dominio: Un evento de dominio dispara 2 listeners independientes y un cron cada minuto procesa
+      una condición sin duplicar trabajo si se ejecuta dos veces.
+  - id: f8.colas-bullmq
+    nombre: Colas con BullMQ
+    tipo: codigo
+    conceptos:
+    - cola y worker
+    - jobs
+    - reintentos con backoff
+    - concurrencia
+    - jobs fallidos
+    - Redis como respaldo
+    tecnologias:
+    - '@nestjs/bullmq'
+    - BullMQ
+    - Redis
+    criterio_dominio: Un job que falla las 2 primeras veces y pasa a la tercera con backoff (visible en
+      logs), y un procesador con concurrencia 2 con una consulta que lista los jobs fallidos.
+  - id: f8.microservicios-transporters
+    nombre: Microservicios en Nest - transporters y patrones
+    tipo: codigo
+    conceptos:
+    - '@nestjs/microservices'
+    - transporters (TCP, Redis, NATS)
+    - '@MessagePattern'
+    - '@EventPattern'
+    - ClientProxy
+    - app híbrida
+    - gRPC (visión general)
+    tecnologias:
+    - '@nestjs/microservices'
+    - ClientProxy
+    - docker compose
+    criterio_dominio: Un servicio de notificaciones separado usa un transporter; la API lo llama con send
+      (con respuesta) y con emit (evento), y todo corre con un solo docker compose up.
+  - id: f8.microservicios-resiliencia
+    nombre: Resiliencia y cuándo no usar microservicios
+    tipo: mixto
+    conceptos:
+    - monolito modular primero
+    - idempotencia
+    - timeouts y reintentos
+    - consistencia eventual
+    - patrón outbox
+    - monorepo vs repos separados
+    tecnologias:
+    - timeout de RxJS
+    - ClientProxy
+    criterio_dominio: Con el microservicio caído, la API responde con un timeout controlado y el evento
+      no se pierde (reintento u outbox simple); un documento de 10 líneas fija criterios para no separar
+      un servicio.
+- id: f9
+  nombre: Calidad, observabilidad y despliegue
+  horas: 22
+  certificacion_ancla: null
+  criterio_dominio_fase: El repo funciona como workspace Nx con apps/web, apps/api y una librería compartida
+    de modelos, y un cambio en la librería dispara solo las pruebas de los proyectos afectados (nx affected);
+    suite con unitarios y e2e (con base real efímera) en CI verde; imagen Docker multi-stage de la API;
+    endpoint /health; logs estructurados con correlation id; API desplegada con URL pública y migraciones
+    corridas desde el pipeline; un checklist de revisión de PR aplicado a código generado por IA con 3
+    fallos reales encontrados.
+  capstone: 'Pruebas, Nx, CI, Docker y despliegue (en Michilog: hitos 10 y 12; Nx después del hito 4).'
+  topicos:
+  - id: f9.testing-unitario
+    nombre: Tests unitarios con módulos de testing
+    tipo: codigo
+    conceptos:
+    - pirámide de testing
+    - Test.createTestingModule
+    - providers falsos
+    - overrideProvider
+    - jest.fn
+    - cobertura útil
+    tecnologias:
+    - Jest
+    - '@nestjs/testing'
+    criterio_dominio: Servicios de 2 módulos con tests unitarios que usan dobles, cobertura del 80 por
+      ciento en la lógica de negocio y un test que falla al romper una regla de negocio a propósito.
+  - id: f9.testing-e2e
+    nombre: Tests e2e y base de datos efímera
+    tipo: codigo
+    prerequisitos:
+    - f5.migraciones
+    conceptos:
+    - supertest
+    - Testcontainers
+    - migraciones en tests
+    - aislamiento entre tests
+    - Jest vs Vitest
+    tecnologias:
+    - supertest
+    - Testcontainers
+    - Jest
+    criterio_dominio: Una suite e2e arranca un Postgres efímero con Testcontainers, corre migraciones
+      y prueba autenticación y un CRUD; corre limpia 3 veces seguidas.
+  - id: f9.logging-observabilidad
+    nombre: Logging estructurado, health checks y observabilidad
+    tipo: codigo
+    conceptos:
+    - Logger de Nest
+    - pino
+    - correlation id
+    - '@nestjs/observe'
+    - health checks
+    - enableShutdownHooks
+    tecnologias:
+    - pino
+    - '@nestjs/terminus'
+    - '@nestjs/observe'
+    criterio_dominio: Logs en JSON con un correlation id que atraviesa una request y su query; un /health
+      que falla si la base de datos cae; un apagado ordenado verificado con SIGTERM.
+  - id: f9.docker-produccion
+    nombre: Docker para producción
+    tipo: codigo
+    conceptos:
+    - Dockerfile multi-stage
+    - imagen mínima
+    - usuario no root
+    - .dockerignore
+    - compose completo
+    tecnologias:
+    - Dockerfile
+    - docker compose
+    - docker image ls
+    criterio_dominio: Una imagen multi-stage sin devDependencies que corre como usuario no root, con el
+      tamaño medido antes y después, y un compose que levanta API, base de datos y Redis con un solo comando.
+  - id: f9.nx-monorepo
+    nombre: Monorepo con Nx
+    tipo: codigo
+    prerequisitos:
+    - f2.anatomia-nest
+    conceptos:
+    - nx init sobre un repo existente
+    - tareas inferidas
+    - grafo de proyectos
+    - caché
+    - nx affected
+    - enforce-module-boundaries
+    - qué compartir en una librería
+    tecnologias:
+    - Nx 23
+    - nx graph
+    - nx affected
+    criterio_dominio: Un workspace Nx con apps/web y apps/api y una librería de modelos; un cambio en
+      la librería ejecuta solo los tests afectados (nx affected), la segunda corrida muestra cache hit
+      y una regla de límites bloquea un import indebido.
+  - id: f9.ci-despliegue
+    nombre: CI y despliegue
+    tipo: codigo
+    conceptos:
+    - workflow de GitHub Actions
+    - lint, test y build
+    - servicio de Postgres en CI
+    - migraciones desde el pipeline
+    - secretos
+    - despliegue a un host
+    tecnologias:
+    - GitHub Actions
+    - Railway, Fly o Render
+    criterio_dominio: Un pipeline verde con lint, test y build con un servicio de Postgres; despliegue
+      con URL pública y migraciones corridas desde el pipeline, con los secretos fuera del repo.
+  - id: f9.rendimiento-migracion
+    nombre: Rendimiento y migración de Nest 11 a 12
+    tipo: mixto
+    conceptos:
+    - Fastify vs Express
+    - índices
+    - caché
+    - guía de migración 11 a 12
+    - CJS a ESM
+    tecnologias:
+    - autocannon
+    - '@nestjs/platform-fastify'
+    - docs.nestjs.com/migration-guide
+    criterio_dominio: Un benchmark simple con autocannon de Express contra Fastify con tabla de resultados,
+      y la migración de un proyecto de Nest 11 a 12 siguiendo la guía con tests verdes y la lista de cambios
+      que hubo que hacer.
+  - id: f9.revision-codigo-ia
+    nombre: Revisión de código generado por IA
+    tipo: mixto
+    conceptos:
+    - checklist de PR
+    - N+1
+    - validación faltante
+    - secretos en el código
+    - transacciones
+    - tests que no prueban nada
+    tecnologias:
+    - checklist de PR
+    - Jest
+    criterio_dominio: Un checklist de revisión de PR aplicado a código generado por IA, con 3 fallos reales
+      encontrados y corregidos, y un test por cada uno que falla antes del arreglo y pasa después.

@@ -1,0 +1,42 @@
+{
+  "skill": "create-learning-agent",
+  "version": "3.2",
+  "generado_en": "2026-11-22",
+  "actualizado_en": null,
+  "placeholders": {
+    "TEMA": "NestJS y Node.js backend",
+    "SLUG": "nestjs",
+    "HERRAMIENTAS_EVAL": "`npx jest <archivo>`, `npx tsc --noEmit`, `curl` contra el servidor local y, cuando hay base de datos, `docker compose ps` y `psql`",
+    "EJEMPLO_TEST": "un archivo `*.spec.ts` de Jest que falla",
+    "LABS_EJEMPLOS": "`docker-compose.yml` con PostgreSQL, MongoDB con replica set o Redis, y una app Nest mínima por lab",
+    "REQUISITOS_EXTRA": "Node.js 24 LTS (se recomienda instalarlo con nvm), npm o pnpm, Docker con Docker Compose, Git, `@nestjs/cli` (`npm i -g @nestjs/cli`) y un editor con soporte de TypeScript (por ejemplo VS Code)",
+    "STACK_GITIGNORE": "node_modules/\ndist/\ncoverage/\n*.log\n.nx/\n.env.*\n!.env.example\npgdata/\nmongodata/"
+  },
+  "personalizaciones": [
+    {
+      "fecha": "2026-11-22",
+      "descripcion": "Plantilla de ejercicio en TypeScript con Jest en lugar de Python con pytest",
+      "archivos": [
+        "ejercicios/_plantilla/starter.ts",
+        "ejercicios/_plantilla/starter.spec.ts",
+        "ejercicios/_plantilla/enunciado.md"
+      ],
+      "detalle": "Se eliminaron starter.py y test_starter.py de ejercicios/_plantilla/ y se crearon starter.ts (export function targetFunction(inputData: string): string con TODO) y starter.spec.ts (describe/it de Jest que importa targetFunction de './starter'). En enunciado.md: `starter.py` -> `starter.ts`, `test_starter.py` -> `starter.spec.ts` y `pytest test_starter.py -q` -> `npx jest starter.spec.ts`."
+    },
+    {
+      "fecha": "2026-11-22",
+      "descripcion": "Contexto de la estudiante: viene de Angular, practica con Michilog, explicaciones sencillas",
+      "archivos": [
+        "CLAUDE.md"
+      ],
+      "detalle": "Se añadió la sección '## Contexto de la estudiante' justo antes de '## Regla de explicación: asume cero conocimiento'. Contiene 5 viñetas: (1) partir de equivalentes de Angular al introducir conceptos de Nest; (2) practica con el proyecto Michilog y la sección 'Ruta con Michilog' de docs/roadmap.md; en /start-sesion preguntar en qué hito está y ofrecer como alternativa el tópico que el hito necesita si es posterior a posicion_actual y el diagnóstico no muestra huecos que lo bloqueen, dejando que ella decida y, si el tópico es de otra fase, corriendo antes el gate de entrada de esa fase; (3) analogías cotidianas y lenguaje sencillo, reiniciar desde una base más simple si algo es denso; (4) código con tipos e interfaces explícitos en TypeScript strict; (5) ejercicios con Nest 12, Node 24 LTS y Jest, y señalar recursos de versiones anteriores de Nest."
+    }
+  ],
+  "upgrades": [],
+  "_reglas": [
+    "Manifest del motor del tutor. Lo crea la skill al generar el repo; /config añade entradas a 'personalizaciones'; /upgrade-agent actualiza 'version' y 'actualizado_en' y añade entradas a 'upgrades'. Ningún otro command ni el estudiante lo edita",
+    "placeholders: valores con los que se instanciaron CLAUDE.md, README.md, .gitignore y labs/README.md. /upgrade-agent los reutiliza para regenerar esos archivos con la versión nueva de la skill (N_FASES y N_TOPICOS no se guardan: se recalculan de roadmap/roadmap.yaml)",
+    "personalizaciones: [{fecha, descripcion, archivos, detalle}] — 'detalle' describe el cambio con precisión suficiente para volver a aplicarlo sobre una versión nueva del archivo",
+    "upgrades: [{fecha, de, a, plan}] — 'plan' es la ruta del archivo en docs/upgrades/ que documenta ese upgrade"
+  ]
+}
