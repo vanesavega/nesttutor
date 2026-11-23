@@ -1,9 +1,9 @@
 {
   "version": 3,
   "setup": {
-    "estado": "pendiente",
-    "remote": null,
-    "completado_en": null
+    "estado": "completado",
+    "remote": "https://github.com/vanesavega/nesttutor",
+    "completado_en": "2026-11-22"
   },
   "diagnostico": {
     "estado": "pendiente",
